@@ -4,9 +4,15 @@ import os
 import json
 from dotenv import load_dotenv
 import random
+import sys 
 
-########## Set up ##########
+tag = sys.stdin.readline()
+
+
+######### Set up ######### 
 load_dotenv()
+
+PATH = "E:\\Program\\DiscordBot\\DiscordBot_v1\\src\\assets\\images"
 ASSEST_PATH = os.getenv("ASSEST_PATH")
 COOKIE = os.getenv("COOKIE")
 
@@ -24,41 +30,51 @@ HEADERS = {
     "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
 }
 
-########## Main ##########
+######### Main ######### 
 
-res1 = requests.get("https://www.pixiv.net/ajax/top/illust?mode=all&lang=zh_tw&version=6c38cc7c723c6ae8b0dc7022d497a1ee751824c0", headers=HEADERS)
+res1 = requests.get(f"https://www.pixiv.net/ajax/search/artworks/{str(tag)}?word=Genshine&order=date_d&mode=all&p=1&csw=0&s_mode=s_tag&type=all&lang=zh_tw&version=6c38cc7c723c6ae8b0dc7022d497a1ee751824c0", headers=HEADERS)
 id = json.loads(res1.text)
 
-png_id = (id["body"]["page"]["follow"][int(random.uniform(1,40))])
+png_id = (id["body"]["illustManga"]["data"][int(random.uniform(1,59))]["id"])
 
+# Get picture html
 res2 = requests.get(f"https://www.pixiv.net/artworks/{png_id}",headers=HEADERS)
 soup = BeautifulSoup(res2.text, "lxml")
 
+# Get title
 title_link = soup.find("meta", attrs={"property":"twitter:title"})
 title = title_link.get("content")
 description_link = soup.find("meta", attrs={"name":'description'})
 description = description_link.get("content")
 
+# Get Json
 link = soup.find("meta", attrs={"id":"meta-preload-data"})
 link_json = json.loads(link.get("content"))
 
+# Get picture
 res3 = requests.get(link_json["illust"][f"{png_id}"]["urls"]["original"], stream=True, headers=HEADERS)
 
-########## End ##########
+######### End ######### 
 
+data = {}
 # Request succed
 if res3.status_code == 200:
 
-    os.chdir(f"{ASSEST_PATH}\\recommends") 
-    img = res3.raw.read()
+    data['error'] = False
+    data['title'] = title
+    data['png_id'] = png_id
+    data['description'] = description
 
-    with open("image.png", mode='wb') as f:
-        f.write(img) 
-        
-    with open("image_info.json", mode='wb') as f:
-        data = {}
-        data['title'] = title
-        data['png_id'] = png_id
-        data['description'] = description
-        jsonFile = open(f"{ASSEST_PATH}\\recommends\\image_info.json",'w')
-        json.dump(data, jsonFile)
+    if not os.path.isfile(f"{PATH}\\{png_id}.png"):
+        os.chdir(PATH)
+        img = res3.raw.read()
+        with open(f"{png_id}.png", mode='wb') as f:
+            f.write(img)
+
+    print(str(json.dumps(data)))
+    
+else:
+    
+    data['error'] = True
+    print(str(json.dumps(data)))
+    

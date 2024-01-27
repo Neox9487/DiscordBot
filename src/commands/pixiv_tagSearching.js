@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
-const pixiv = require('../utils/pixiv');
+const pixiv = require('../utils/pixiv.js');
 
 module.exports = {
 
