@@ -12,7 +12,7 @@ class Pixiv{
             mode: 'text',
             pythonOptions: ['-u'],
             scriptPath: './src/python',
-        }
+        };
 
         let json = null;
         let pyshell = new PythonShell('pixiv_recommend.py',options);
