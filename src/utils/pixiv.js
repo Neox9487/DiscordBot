@@ -19,11 +19,12 @@ class Pixiv{
         let pyshell = new PythonShell('pixiv_recommend.py',options);
         const image_path = "./src/assets/images/";
 
-        pyshell.send(null)
+        pyshell.send(null);
         pyshell.on('message', function (message) {
             json = JSON.parse(message);
         });
         pyshell.end(function (err,data) {
+
             if (err) throw err;
             let file = new AttachmentBuilder(image_path+`${json['png_id']}.png`);
 
@@ -61,11 +62,12 @@ class Pixiv{
         let pyshell = new PythonShell('pixiv_tagSearching.py',options);
         const image_path = "./src/assets/images/";
 
-        pyshell.send(String(tag))
+        pyshell.send(String(tag));
         pyshell.on('message', function (message){
             json = JSON.parse(message);
         });
         pyshell.end(function (err,data) {
+
             if (err) throw err;
             let file = new AttachmentBuilder(image_path+`${json['png_id']}.png`);
 
@@ -110,6 +112,7 @@ class Pixiv{
             finish = (message == "finish" ? true : false)
         });
         pyshell.end(function (err,data) {
+
             if (err) throw err;
 
             if (finish) {
@@ -121,6 +124,7 @@ class Pixiv{
                 interaction.deleteReply();
                 interaction.followUp("This pixiv user ID is not exist!");
             }
+            
         });
         
         return;

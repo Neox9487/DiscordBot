@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 import random
 import sys 
 
+########## Input ########## 
+
 start = sys.stdin.readline()
 
 ########## Set up ##########
