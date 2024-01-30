@@ -59,8 +59,8 @@ if res3.status_code == 200:
     data['png_id'] = png_id
     data['description'] = description
 
-    if not os.path.isfile(f"{ASSEST_PATH}\\{png_id}.png"):
-        os.chdir(ASSEST_PATH)
+    if not os.path.isfile(f"{ASSEST_PATH}\\images\\{png_id}.png"):
+        os.chdir(ASSEST_PATH+"\\images")
         img = res3.raw.read()
         with open(f"{png_id}.png", mode='wb') as f:
             f.write(img)
